@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:getx_kullanimi/models/record.dart';
+import 'package:getx_kullanimi/view-models/controller.dart';
 import 'package:intl/intl.dart';
 
 class RecordListTile extends StatelessWidget {
-  const RecordListTile({Key? key}) : super(key: key);
+  final Record record;
+  RecordListTile({Key? key, required this.record}) : super(key: key);
+  final Controller _controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -11,31 +16,43 @@ class RecordListTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: ListTile(
-          leading: Text(DateFormat('EEE, MMM d').format(DateTime.now())),
-          title: const Center(
-              child: Text(
-            "75",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          )),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.grey,
-                  )),
-              IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ))
-            ],
-          ),
+          leading: _buildDate(),
+          title: _buildWeight(),
+          trailing: _buildIcons(),
         ),
       ),
     );
   }
+
+  Row _buildIcons() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const IconButton(
+            onPressed: null,
+            icon: Icon(
+              Icons.edit,
+              color: Colors.grey,
+            )),
+        IconButton(
+            onPressed: () {
+              _controller.deleteRecord(record);
+            },
+            icon: const Icon(
+              Icons.delete,
+              color: Colors.red,
+            ))
+      ],
+    );
+  }
+
+  Center _buildWeight() {
+    return Center(
+        child: Text(
+      "${record.weight}",
+      style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+    ));
+  }
+
+  Text _buildDate() => Text(DateFormat('EEE, MMM d').format(record.dateTime));
 }
